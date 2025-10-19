@@ -1,11 +1,22 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { BAGAdres, ScanFormData, AnalyseResult } from '@/lib/types';
-import Link from 'next/link';
+import { useTranslations } from '@/components/LanguageProvider';
+
+const insulationOptionsOrder: Array<'muurisolatie' | 'dakisolatie' | 'vloerisolatie' | 'dubbel glas' | 'HR++ glas'> = [
+  'muurisolatie',
+  'dakisolatie',
+  'vloerisolatie',
+  'dubbel glas',
+  'HR++ glas',
+];
 
 export default function ScanPage() {
+  const { t } = useTranslations();
+  const { common, scan } = t;
   const [formData, setFormData] = useState<Partial<ScanFormData>>({
     adres: '',
     bouwjaar: 0,
@@ -32,7 +43,7 @@ export default function ScanPage() {
     if (currentIsolatie.includes(type)) {
       setFormData({
         ...formData,
-        isolatie: currentIsolatie.filter(i => i !== type),
+        isolatie: currentIsolatie.filter((item) => item !== type),
       });
     } else {
       setFormData({
@@ -55,13 +66,18 @@ export default function ScanPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Er ging iets mis bij het analyseren van je woning');
+        throw new Error(scan.analysisError);
       }
 
       const result = await response.json();
       setAnalyseResult(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Er is een fout opgetreden');
+      console.error('Analyse error:', err);
+      if (err instanceof Error && err.message === scan.analysisError) {
+        setError(err.message);
+      } else {
+        setError(scan.genericError);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -84,27 +100,22 @@ export default function ScanPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
       <div className="container mx-auto px-4">
-        {/* Header */}
         <div className="mb-8">
           <Link href="/" className="inline-flex items-center text-green-600 hover:text-green-700 font-medium mb-4">
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Terug naar home
+            {common.backToHome}
           </Link>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Energiescan</h1>
-          <p className="text-xl text-gray-600 mt-2">Vul de gegevens van je woning in voor een persoonlijk advies</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">{scan.title}</h1>
+          <p className="text-xl text-gray-600 mt-2">{scan.description}</p>
         </div>
 
         <div className="max-w-3xl mx-auto">
-          {/* Form Card */}
           <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Adres */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Adres *
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{scan.addressLabel}</label>
                 <AddressAutocomplete
                   value={formData.adres || ''}
                   onChange={(value) => setFormData({ ...formData, adres: value })}
@@ -112,97 +123,73 @@ export default function ScanPage() {
                 />
               </div>
 
-              {/* Bouwjaar */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Bouwjaar *
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{scan.yearLabel}</label>
                 <input
                   type="number"
                   value={formData.bouwjaar || ''}
-                  onChange={(e) => setFormData({ ...formData, bouwjaar: parseInt(e.target.value) })}
-                  placeholder="Bijv. 1990"
+                  onChange={(e) => setFormData({ ...formData, bouwjaar: parseInt(e.target.value, 10) })}
+                  placeholder={scan.yearPlaceholder}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
                 />
               </div>
 
-              {/* Woningtype */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Type woning *
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{scan.typeLabel}</label>
                 <select
                   value={formData.woningtype || ''}
                   onChange={(e) => setFormData({ ...formData, woningtype: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
                 >
-                  <option value="">Selecteer type woning</option>
-                  <option value="vrijstaand">Vrijstaande woning</option>
-                  <option value="tussenwoning">Tussenwoning</option>
-                  <option value="hoekwoning">Hoekwoning</option>
-                  <option value="appartement">Appartement</option>
-                  <option value="benedenwoning">Benedenwoning</option>
-                  <option value="bovenwoning">Bovenwoning</option>
+                  <option value="">{scan.typePlaceholder}</option>
+                  {Object.entries(scan.propertyTypes).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
-              {/* Energielabel */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Energielabel *
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{scan.energyLabel}</label>
                 <select
                   value={formData.energielabel || ''}
                   onChange={(e) => setFormData({ ...formData, energielabel: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
                 >
-                  <option value="">Selecteer energielabel</option>
-                  <option value="A++++">A++++ (nieuwbouw)</option>
-                  <option value="A+++">A+++</option>
-                  <option value="A++">A++</option>
-                  <option value="A+">A+</option>
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="C">C</option>
-                  <option value="D">D</option>
-                  <option value="E">E</option>
-                  <option value="F">F</option>
-                  <option value="G">G</option>
-                  <option value="onbekend">Onbekend</option>
+                  <option value="">{scan.energyPlaceholder}</option>
+                  {Object.entries(scan.energyLabels).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
-              {/* Verwarmingstype */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Verwarmingstype *
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{scan.heatingLabel}</label>
                 <select
                   value={formData.verwarming || ''}
                   onChange={(e) => setFormData({ ...formData, verwarming: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
                 >
-                  <option value="">Selecteer verwarmingstype</option>
-                  <option value="cv-ketel">CV-ketel (gas)</option>
-                  <option value="warmtepomp">Warmtepomp</option>
-                  <option value="stadsverwarming">Stadsverwarming</option>
-                  <option value="elektrisch">Elektrische verwarming</option>
-                  <option value="pelletkachel">Pelletkachel</option>
-                  <option value="anders">Anders</option>
+                  <option value="">{scan.heatingPlaceholder}</option>
+                  {Object.entries(scan.heatingOptions).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
-              {/* Isolatie */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Aanwezige isolatie
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{scan.insulationLabel}</label>
                 <div className="space-y-2">
-                  {['muurisolatie', 'dakisolatie', 'vloerisolatie', 'dubbel glas', 'HR++ glas'].map((type) => (
+                  {insulationOptionsOrder.map((type) => (
                     <label key={type} className="flex items-center">
                       <input
                         type="checkbox"
@@ -210,13 +197,12 @@ export default function ScanPage() {
                         onChange={() => handleIsolatieToggle(type)}
                         className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
                       />
-                      <span className="ml-3 text-gray-700 capitalize">{type}</span>
+                      <span className="ml-3 text-gray-700">{scan.insulationOptions[type]}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isLoading}
@@ -225,14 +211,14 @@ export default function ScanPage() {
                 {isLoading ? (
                   <>
                     <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-3"></div>
-                    Analyseren...
+                    {scan.analyzing}
                   </>
                 ) : (
                   <>
                     <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Analyseer mijn woning
+                    {scan.submit}
                   </>
                 )}
               </button>
@@ -245,11 +231,10 @@ export default function ScanPage() {
             )}
           </div>
 
-          {/* Results Card */}
           {analyseResult && (
             <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 animate-fade-in">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-bold text-gray-900">Jouw Energierapport</h2>
+                <h2 className="text-3xl font-bold text-gray-900">{scan.resultTitle}</h2>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -270,7 +255,7 @@ export default function ScanPage() {
                 <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Download mijn rapport als PDF
+                {scan.downloadReport}
               </button>
             </div>
           )}
@@ -279,4 +264,3 @@ export default function ScanPage() {
     </div>
   );
 }
-

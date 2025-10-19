@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import { LanguageProvider } from "@/components/LanguageProvider";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,7 +18,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AI Energiecoach | MeGreen",
-  description: "Ontvang persoonlijk energieadvies met behulp van AI. Doe de energiescan, stel je vragen of maak direct een afspraak met een energiecoach.",
+  description:
+    "Ontvang persoonlijk energieadvies met behulp van AI. Doe de energiescan, stel je vragen of maak direct een afspraak met een energiecoach.",
 };
 
 export default function RootLayout({
@@ -26,12 +29,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="nl">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-        <SpeedInsights />
-        <Analytics />
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <LanguageProvider>
+          <LanguageSwitcher />
+          {children}
+          <SpeedInsights />
+          <Analytics />
+        </LanguageProvider>
       </body>
     </html>
   );

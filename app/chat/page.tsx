@@ -3,8 +3,11 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { ChatMessage } from '@/lib/types';
+import { useTranslations } from '@/components/LanguageProvider';
 
 export default function ChatPage() {
+  const { t } = useTranslations();
+  const { common, chat } = t;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +30,7 @@ export default function ChatPage() {
       content: input,
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
@@ -41,20 +44,19 @@ export default function ChatPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Er ging iets mis');
+        throw new Error(common.errors.chat);
       }
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
 
       if (!reader) {
-        throw new Error('Geen response stream');
+        throw new Error(common.errors.noStream);
       }
 
       let assistantMessage = '';
-      
-      // Voeg een lege assistant message toe die we gaan updaten
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+      setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -67,14 +69,13 @@ export default function ChatPage() {
           if (line.startsWith('data: ')) {
             const data = line.slice(6);
             if (data === '[DONE]') continue;
-            
+
             try {
               const parsed = JSON.parse(data);
               const content = parsed.choices[0]?.delta?.content || '';
               if (content) {
                 assistantMessage += content;
-                // Update de laatste message
-                setMessages(prev => {
+                setMessages((prev) => {
                   const newMessages = [...prev];
                   newMessages[newMessages.length - 1] = {
                     role: 'assistant',
@@ -84,17 +85,20 @@ export default function ChatPage() {
                 });
               }
             } catch {
-              // Negeer parse errors
+              // Ignore parse errors
             }
           }
         }
       }
     } catch (error) {
-      console.error('Fout bij chat:', error);
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: 'Sorry, er ging iets mis. Probeer het opnieuw.',
-      }]);
+      console.error('Chat error:', error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: chat.retryMessage,
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -102,21 +106,19 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
-      {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="container mx-auto px-4 py-4">
           <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium mb-2">
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Terug naar home
+            {common.backToHome}
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">AI Energiecoach Chat</h1>
-          <p className="text-gray-600">Stel je vragen over energiebesparing</p>
+          <h1 className="text-3xl font-bold text-gray-900">{chat.title}</h1>
+          <p className="text-gray-600">{chat.subtitle}</p>
         </div>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           {messages.length === 0 && (
@@ -126,28 +128,19 @@ export default function ChatPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Welkom bij de AI Energiecoach</h2>
-              <p className="text-gray-600 mb-6">Stel een vraag over energie besparen, isolatie, zonnepanelen of andere energievragen!</p>
-              
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">{chat.welcomeTitle}</h2>
+              <p className="text-gray-600 mb-6">{chat.welcomeDescription}</p>
+
               <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
-                <button
-                  onClick={() => setInput('Hoe kan ik het beste mijn huis isoleren?')}
-                  className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-left"
-                >
-                  <p className="text-sm text-gray-700">Hoe kan ik het beste mijn huis isoleren?</p>
-                </button>
-                <button
-                  onClick={() => setInput('Zijn zonnepanelen nog steeds rendabel?')}
-                  className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-left"
-                >
-                  <p className="text-sm text-gray-700">Zijn zonnepanelen nog steeds rendabel?</p>
-                </button>
-                <button
-                  onClick={() => setInput('Wat zijn de beste manieren om energie te besparen?')}
-                  className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-left"
-                >
-                  <p className="text-sm text-gray-700">Wat zijn de beste manieren om energie te besparen?</p>
-                </button>
+                {chat.examples.map((example) => (
+                  <button
+                    key={example}
+                    onClick={() => setInput(example)}
+                    className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-start"
+                  >
+                    <p className="text-sm text-gray-700">{example}</p>
+                  </button>
+                ))}
               </div>
             </div>
           )}
@@ -158,11 +151,12 @@ export default function ChatPage() {
               className={`mb-6 flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`flex items-start max-w-3xl ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                {/* Avatar */}
                 <div className={`flex-shrink-0 ${message.role === 'user' ? 'ml-3' : 'mr-3'}`}>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    message.role === 'user' ? 'bg-blue-600' : 'bg-green-600'
-                  }`}>
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      message.role === 'user' ? 'bg-blue-600' : 'bg-green-600'
+                    }`}
+                  >
                     {message.role === 'user' ? (
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -175,12 +169,13 @@ export default function ChatPage() {
                   </div>
                 </div>
 
-                {/* Message */}
-                <div className={`rounded-2xl px-6 py-4 ${
-                  message.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-900 shadow-md'
-                }`}>
+                <div
+                  className={`rounded-2xl px-6 py-4 ${
+                    message.role === 'user'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-900 shadow-md'
+                  }`}
+                >
                   <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
                 </div>
               </div>
@@ -212,7 +207,6 @@ export default function ChatPage() {
         </div>
       </div>
 
-      {/* Input */}
       <div className="bg-white border-t border-gray-200 py-4">
         <div className="container mx-auto px-4 max-w-4xl">
           <form onSubmit={handleSubmit} className="flex gap-3">
@@ -220,7 +214,7 @@ export default function ChatPage() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Stel een vraag over energie besparen..."
+              placeholder={chat.inputPlaceholder}
               className="flex-1 px-6 py-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               disabled={isLoading}
             />
@@ -228,6 +222,7 @@ export default function ChatPage() {
               type="submit"
               disabled={isLoading || !input.trim()}
               className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold px-8 py-4 rounded-full hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={chat.inputPlaceholder}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -239,4 +234,3 @@ export default function ChatPage() {
     </div>
   );
 }
-

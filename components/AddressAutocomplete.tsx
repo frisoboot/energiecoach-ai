@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { BAGAdres } from '@/lib/types';
+import { useTranslations } from '@/components/LanguageProvider';
 
 interface AddressAutocompleteProps {
   value: string;
@@ -9,11 +10,13 @@ interface AddressAutocompleteProps {
   onAddressSelect: (address: BAGAdres) => void;
 }
 
-export default function AddressAutocomplete({ 
-  value, 
-  onChange, 
-  onAddressSelect 
+export default function AddressAutocomplete({
+  value,
+  onChange,
+  onAddressSelect,
 }: AddressAutocompleteProps) {
+  const { t } = useTranslations();
+  const { scan, address } = t;
   const [suggestions, setSuggestions] = useState<BAGAdres[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -21,7 +24,6 @@ export default function AddressAutocomplete({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Sluit suggesties wanneer er buiten geklikt wordt
     function handleClickOutside(event: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
@@ -49,7 +51,7 @@ export default function AddressAutocomplete({
           `https://api.bag.kadaster.nl/esd/bevragen/adres?zoekterm=${encodeURIComponent(value)}`
         );
         const data = await response.json();
-        
+
         if (data._embedded?.adressen) {
           const addresses: BAGAdres[] = data._embedded.adressen.map((item: {
             adres?: {
@@ -82,9 +84,9 @@ export default function AddressAutocomplete({
     };
   }, [value]);
 
-  const handleSelectAddress = (address: BAGAdres) => {
-    onChange(address.weergavenaam);
-    onAddressSelect(address);
+  const handleSelectAddress = (selected: BAGAdres) => {
+    onChange(selected.weergavenaam);
+    onAddressSelect(selected);
     setShowSuggestions(false);
     setSuggestions([]);
   };
@@ -95,10 +97,10 @@ export default function AddressAutocomplete({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Bijv. Kerkstraat 1, Amsterdam"
+        placeholder={scan.addressPlaceholder}
         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
       />
-      
+
       {isLoading && (
         <div className="absolute right-3 top-3">
           <div className="animate-spin h-5 w-5 border-2 border-green-500 border-t-transparent rounded-full"></div>
@@ -107,15 +109,17 @@ export default function AddressAutocomplete({
 
       {showSuggestions && suggestions.length > 0 && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
-          {suggestions.map((address, index) => (
+          {suggestions.map((addressSuggestion, index) => (
             <button
-              key={`${address.identificatie}-${index}`}
-              onClick={() => handleSelectAddress(address)}
-              className="w-full text-left px-4 py-3 hover:bg-green-50 transition-colors border-b border-gray-100 last:border-b-0"
+              key={`${addressSuggestion.identificatie}-${index}`}
+              onClick={() => handleSelectAddress(addressSuggestion)}
+              className="w-full text-start px-4 py-3 hover:bg-green-50 transition-colors border-b border-gray-100 last:border-b-0"
             >
-              <div className="font-medium text-gray-900">{address.weergavenaam}</div>
-              {address.bouwjaar && (
-                <div className="text-sm text-gray-500">Bouwjaar: {address.bouwjaar}</div>
+              <div className="font-medium text-gray-900">{addressSuggestion.weergavenaam}</div>
+              {addressSuggestion.bouwjaar && (
+                <div className="text-sm text-gray-500">
+                  {address.constructionYearLabel} {addressSuggestion.bouwjaar}
+                </div>
               )}
             </button>
           ))}
@@ -124,4 +128,3 @@ export default function AddressAutocomplete({
     </div>
   );
 }
-
