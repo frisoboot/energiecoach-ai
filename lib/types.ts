@@ -19,6 +19,9 @@ export interface BAGAdres {
   identificatie: string;
   bouwjaar?: number;
   gebruiksdoel?: string;
+  gebruiksdoelen?: string[];
+  oppervlakte?: number;
+  bagObjectType?: string;
 }
 
 export interface ChatMessage {

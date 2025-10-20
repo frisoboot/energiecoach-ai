@@ -30,11 +30,67 @@ export default function ScanPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const inferPropertyType = (bagAddress: BAGAdres): string | undefined => {
+    const usageValues = new Set(
+      (bagAddress.gebruiksdoelen || (bagAddress.gebruiksdoel ? [bagAddress.gebruiksdoel] : [])).map((value) =>
+        value.toLowerCase()
+      )
+    );
+
+    const bagType = bagAddress.bagObjectType?.toLowerCase();
+    const displayName = bagAddress.weergavenaam.toLowerCase();
+
+    if (bagType) {
+      if (bagType.includes('bovenwoning')) {
+        return 'bovenwoning';
+      }
+      if (bagType.includes('benedenwoning')) {
+        return 'benedenwoning';
+      }
+      if (bagType.includes('appartement')) {
+        return 'appartement';
+      }
+    }
+
+    if (displayName.includes('appartement') || displayName.includes('flat')) {
+      return 'appartement';
+    }
+
+    if (usageValues.has('woonfunctie')) {
+      if (bagAddress.oppervlakte && bagAddress.oppervlakte < 75) {
+        return 'appartement';
+      }
+      if (bagAddress.oppervlakte && bagAddress.oppervlakte >= 75 && bagAddress.oppervlakte < 120) {
+        return 'tussenwoning';
+      }
+      if (bagAddress.oppervlakte && bagAddress.oppervlakte >= 120 && bagAddress.oppervlakte < 150) {
+        return 'hoekwoning';
+      }
+      if (bagAddress.oppervlakte && bagAddress.oppervlakte >= 150) {
+        return 'vrijstaand';
+      }
+    }
+
+    return undefined;
+  };
+
   const handleAddressSelect = (address: BAGAdres) => {
-    setFormData({
-      ...formData,
-      adres: address.weergavenaam,
-      bouwjaar: address.bouwjaar || 0,
+    setFormData((previous) => {
+      const next: Partial<ScanFormData> = {
+        ...previous,
+        adres: address.weergavenaam,
+      };
+
+      if (address.bouwjaar && Number.isFinite(address.bouwjaar)) {
+        next.bouwjaar = address.bouwjaar;
+      }
+
+      const inferredType = inferPropertyType(address);
+      if (inferredType) {
+        next.woningtype = inferredType;
+      }
+
+      return next;
     });
   };
 
