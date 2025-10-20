@@ -84,13 +84,45 @@ export default function ScanPage() {
   };
 
   const handleDownloadPDF = () => {
+    const propertyTypes = scan.propertyTypes;
+    const energyLabels = scan.energyLabels;
+    const heatingOptions = scan.heatingOptions;
+    const insulationOptions = scan.insulationOptions;
+
+    const woningtypeLabel = formData.woningtype
+      ? propertyTypes[
+          formData.woningtype as keyof typeof propertyTypes
+        ] || formData.woningtype
+      : '';
+
+    const energielabelLabel = formData.energielabel
+      ? energyLabels[
+          formData.energielabel as keyof typeof energyLabels
+        ] || formData.energielabel
+      : '';
+
+    const verwarmingLabel = formData.verwarming
+      ? heatingOptions[
+          formData.verwarming as keyof typeof heatingOptions
+        ] || formData.verwarming
+      : '';
+
+    const isolatieLabel = (formData.isolatie || [])
+      .map(
+        (type) =>
+          insulationOptions[
+            type as keyof typeof insulationOptions
+          ] || type
+      )
+      .join(', ');
+
     const queryParams = new URLSearchParams({
       adres: formData.adres || '',
       bouwjaar: formData.bouwjaar?.toString() || '',
-      woningtype: formData.woningtype || '',
-      energielabel: formData.energielabel || '',
-      verwarming: formData.verwarming || '',
-      isolatie: (formData.isolatie || []).join(','),
+      woningtype: woningtypeLabel,
+      energielabel: energielabelLabel,
+      verwarming: verwarmingLabel,
+      isolatie: isolatieLabel,
       advies: analyseResult?.advies || '',
     });
 

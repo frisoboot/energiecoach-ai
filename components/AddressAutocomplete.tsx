@@ -48,7 +48,7 @@ export default function AddressAutocomplete({
       setIsLoading(true);
       try {
         const response = await fetch(
-          `https://api.bag.kadaster.nl/esd/bevragen/adres?zoekterm=${encodeURIComponent(value)}`
+          `/api/bag?zoekterm=${encodeURIComponent(value)}`
         );
         const data = await response.json();
 
@@ -112,6 +112,7 @@ export default function AddressAutocomplete({
           {suggestions.map((addressSuggestion, index) => (
             <button
               key={`${addressSuggestion.identificatie}-${index}`}
+              type="button"
               onClick={() => handleSelectAddress(addressSuggestion)}
               className="w-full text-start px-4 py-3 hover:bg-green-50 transition-colors border-b border-gray-100 last:border-b-0"
             >
