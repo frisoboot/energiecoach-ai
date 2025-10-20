@@ -10,14 +10,19 @@ interface AddressAutocompleteProps {
   onAddressSelect: (address: BAGAdres) => void;
 }
 
+interface Suggestion {
+  label: string;
+  identificatie: string;
+}
+
 export default function AddressAutocomplete({
   value,
   onChange,
   onAddressSelect,
 }: AddressAutocompleteProps) {
   const { t } = useTranslations();
-  const { scan, address } = t;
-  const [suggestions, setSuggestions] = useState<BAGAdres[]>([]);
+  const { scan } = t;
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const debounceTimer = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -38,7 +43,7 @@ export default function AddressAutocomplete({
       clearTimeout(debounceTimer.current);
     }
 
-    if (value.length < 3) {
+    if (value.trim().length < 3) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
@@ -47,31 +52,18 @@ export default function AddressAutocomplete({
     debounceTimer.current = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `https://api.bag.kadaster.nl/esd/bevragen/adres?zoekterm=${encodeURIComponent(value)}`
-        );
-        const data = await response.json();
-
-        if (data._embedded?.adressen) {
-          const addresses: BAGAdres[] = data._embedded.adressen.map((item: {
-            adres?: {
-              weergavenaam?: string;
-              identificatie?: string;
-              bouwjaar?: number;
-              gebruiksdoel?: string[];
-            };
-          }) => ({
-            weergavenaam: item.adres?.weergavenaam || '',
-            identificatie: item.adres?.identificatie || '',
-            bouwjaar: item.adres?.bouwjaar || undefined,
-            gebruiksdoel: item.adres?.gebruiksdoel?.[0] || undefined,
-          }));
-          setSuggestions(addresses);
-          setShowSuggestions(true);
+        const response = await fetch(`/api/bag?query=${encodeURIComponent(value)}`);
+        if (!response.ok) {
+          throw new Error('BAG search failed');
         }
+        const data: { suggestions?: Suggestion[] } = await response.json();
+        const newSuggestions = data.suggestions ?? [];
+        setSuggestions(newSuggestions);
+        setShowSuggestions(newSuggestions.length > 0);
       } catch (error) {
         console.error('Fout bij ophalen BAG data:', error);
         setSuggestions([]);
+        setShowSuggestions(false);
       } finally {
         setIsLoading(false);
       }
@@ -84,11 +76,37 @@ export default function AddressAutocomplete({
     };
   }, [value]);
 
-  const handleSelectAddress = (selected: BAGAdres) => {
-    onChange(selected.weergavenaam);
-    onAddressSelect(selected);
+  const handleSelectAddress = async (selected: Suggestion) => {
+    const fallbackAddress: BAGAdres = {
+      weergavenaam: selected.label,
+      identificatie: selected.identificatie,
+    };
+
     setShowSuggestions(false);
     setSuggestions([]);
+    onChange(selected.label);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        `/api/bag?identificatie=${encodeURIComponent(selected.identificatie)}`
+      );
+      if (!response.ok) {
+        throw new Error('BAG detail fetch failed');
+      }
+      const data: { address?: BAGAdres } = await response.json();
+      if (data.address) {
+        onChange(data.address.weergavenaam || selected.label);
+        onAddressSelect(data.address);
+        return;
+      }
+    } catch (error) {
+      console.error('Fout bij ophalen BAG details:', error);
+    } finally {
+      setIsLoading(false);
+    }
+
+    onAddressSelect(fallbackAddress);
   };
 
   return (
@@ -115,12 +133,7 @@ export default function AddressAutocomplete({
               onClick={() => handleSelectAddress(addressSuggestion)}
               className="w-full text-start px-4 py-3 hover:bg-green-50 transition-colors border-b border-gray-100 last:border-b-0"
             >
-              <div className="font-medium text-gray-900">{addressSuggestion.weergavenaam}</div>
-              {addressSuggestion.bouwjaar && (
-                <div className="text-sm text-gray-500">
-                  {address.constructionYearLabel} {addressSuggestion.bouwjaar}
-                </div>
-              )}
+              <div className="font-medium text-gray-900">{addressSuggestion.label}</div>
             </button>
           ))}
         </div>
