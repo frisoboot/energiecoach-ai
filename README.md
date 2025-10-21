@@ -242,3 +242,4 @@ Voor vragen over MeGreen diensten:
 **Gemaakt met ❤️ voor duurzame energie**
 # Deployment trigger Tue Oct 21 12:43:07 CEST 2025
 # BAG API fix: Environment variable toegevoegd Tue Oct 21 12:46:10 CEST 2025
+# Vercel BAG API fix: Tue Oct 21 12:47:41 CEST 2025
