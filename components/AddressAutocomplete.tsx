@@ -116,7 +116,7 @@ export default function AddressAutocomplete({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={scan.addressPlaceholder}
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-black"
       />
 
       {isLoading && (
