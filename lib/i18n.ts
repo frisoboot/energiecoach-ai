@@ -67,9 +67,24 @@ export interface TranslationContent {
     submit: string;
     analyzing: string;
     resultTitle: string;
-    downloadReport: string;
     analysisError: string;
     genericError: string;
+    calculateInvestment: string;
+    investmentDescription: string;
+    selectInvestments: string;
+    totalInvestment: string;
+    savings10Years: string;
+    averagePaybackTime: string;
+    cumulativeSavings: string;
+    roiComparison: string;
+    detailOverview: string;
+    investment: string;
+    costs: string;
+    savingsPerYear: string;
+    paybackTime: string;
+    roi10Years: string;
+    recommended: string;
+    top3Investments: string;
   };
   chat: {
     title: string;
@@ -197,9 +212,24 @@ export const translations: Record<Locale, TranslationContent> = {
       submit: "Analyseer mijn woning",
       analyzing: "Analyseren...",
       resultTitle: "Jouw Energierapport",
-      downloadReport: "Download mijn rapport als PDF",
       analysisError: "Er ging iets mis bij het analyseren van je woning",
       genericError: "Er is een fout opgetreden",
+      calculateInvestment: "Bereken je investering",
+      investmentDescription: "Selecteer de investeringen die je overweegt en zie direct hoeveel je kunt besparen.",
+      selectInvestments: "Selecteer een of meer investeringen om de berekening te zien",
+      totalInvestment: "Totale investering",
+      savings10Years: "Besparing over 10 jaar",
+      averagePaybackTime: "Gemiddelde terugverdientijd",
+      cumulativeSavings: "Cumulatieve besparing over 10 jaar",
+      roiComparison: "ROI vergelijking tussen investeringen",
+      detailOverview: "Detailoverzicht per investering",
+      investment: "Investering",
+      costs: "Kosten",
+      savingsPerYear: "Besparing/jaar",
+      paybackTime: "Terugverdientijd",
+      roi10Years: "ROI (10 jaar)",
+      recommended: "Aanbevolen",
+      top3Investments: "Top 3 Aanbevolen Investeringen",
     },
     chat: {
       title: "AI Energiecoach Chat",
@@ -348,9 +378,24 @@ export const translations: Record<Locale, TranslationContent> = {
       submit: "Analyse my home",
       analyzing: "Analysing...",
       resultTitle: "Your energy report",
-      downloadReport: "Download my report as PDF",
       analysisError: "Something went wrong while analysing your home",
       genericError: "An error occurred",
+      calculateInvestment: "Calculate your investment",
+      investmentDescription: "Select the investments you are considering and see how much you can save.",
+      selectInvestments: "Select one or more investments to see the calculation",
+      totalInvestment: "Total investment",
+      savings10Years: "Savings over 10 years",
+      averagePaybackTime: "Average payback time",
+      cumulativeSavings: "Cumulative savings over 10 years",
+      roiComparison: "ROI comparison between investments",
+      detailOverview: "Detail overview per investment",
+      investment: "Investment",
+      costs: "Costs",
+      savingsPerYear: "Savings/year",
+      paybackTime: "Payback time",
+      roi10Years: "ROI (10 years)",
+      recommended: "Recommended",
+      top3Investments: "Top 3 Recommended Investments",
     },
     chat: {
       title: "AI Energy Coach Chat",
@@ -499,9 +544,24 @@ export const translations: Record<Locale, TranslationContent> = {
       submit: "Evimi analiz et",
       analyzing: "Analiz ediliyor...",
       resultTitle: "Enerji raporunuz",
-      downloadReport: "Raporumun PDF'ini indir",
       analysisError: "Eviniz analiz edilirken bir hata oluştu",
       genericError: "Bir hata oluştu",
+      calculateInvestment: "Yatırımınızı hesaplayın",
+      investmentDescription: "Düşündüğünüz yatırımları seçin ve ne kadar tasarruf edebileceğinizi görün.",
+      selectInvestments: "Hesaplamayı görmek için bir veya daha fazla yatırım seçin",
+      totalInvestment: "Toplam yatırım",
+      savings10Years: "10 yılda tasarruf",
+      averagePaybackTime: "Ortalama geri ödeme süresi",
+      cumulativeSavings: "10 yılda kümülatif tasarruf",
+      roiComparison: "Yatırımlar arası ROI karşılaştırması",
+      detailOverview: "Yatırım başına detaylı genel bakış",
+      investment: "Yatırım",
+      costs: "Maliyetler",
+      savingsPerYear: "Yıllık tasarruf",
+      paybackTime: "Geri ödeme süresi",
+      roi10Years: "ROI (10 yıl)",
+      recommended: "Önerilen",
+      top3Investments: "En Çok Önerilen 3 Yatırım",
     },
     chat: {
       title: "Yapay Zeka Enerji Koçu Sohbeti",
@@ -650,9 +710,24 @@ export const translations: Record<Locale, TranslationContent> = {
       submit: "حلّل منزلي",
       analyzing: "جارٍ التحليل...",
       resultTitle: "تقرير الطاقة الخاص بك",
-      downloadReport: "حمّل تقريري بصيغة PDF",
       analysisError: "حدث خطأ أثناء تحليل منزلك",
       genericError: "حدث خطأ",
+      calculateInvestment: "احسب استثمارك",
+      investmentDescription: "اختر الاستثمارات التي تفكر فيها وشاهد مقدار ما يمكنك توفيره.",
+      selectInvestments: "اختر استثمارًا واحدًا أو أكثر لرؤية الحساب",
+      totalInvestment: "إجمالي الاستثمار",
+      savings10Years: "التوفير على مدى 10 سنوات",
+      averagePaybackTime: "متوسط وقت الاسترداد",
+      cumulativeSavings: "التوفير التراكمي على مدى 10 سنوات",
+      roiComparison: "مقارنة العائد على الاستثمار بين الاستثمارات",
+      detailOverview: "نظرة عامة تفصيلية لكل استثمار",
+      investment: "الاستثمار",
+      costs: "التكاليف",
+      savingsPerYear: "التوفير/سنة",
+      paybackTime: "وقت الاسترداد",
+      roi10Years: "العائد على الاستثمار (10 سنوات)",
+      recommended: "موصى به",
+      top3Investments: "أفضل 3 استثمارات موصى بها",
     },
     chat: {
       title: "محادثة مدرب الطاقة بالذكاء الاصطناعي",

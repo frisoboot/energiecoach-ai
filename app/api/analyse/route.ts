@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { openai } from '@/lib/openai';
+import { getAanbevolenInvesteringen, berekenROI } from '@/lib/calculator';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,6 +14,17 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Haal aanbevolen investeringen op
+    const aanbevolenInvesteringen = getAanbevolenInvesteringen({
+      energielabel,
+      isolatie,
+      verwarming,
+      bouwjaar,
+    });
+
+    // Bereken ROI voor aanbevolen investeringen
+    const investeringsBerekeningen = aanbevolenInvesteringen.map((inv) => berekenROI(inv));
 
     // Bouw de prompt voor GPT-4o
     const isolatieText = isolatie && isolatie.length > 0 
@@ -33,7 +45,7 @@ Geef in je advies:
 1. Een korte analyse van de huidige situatie
 2. Realistische besparing in euro's per jaar (gebaseerd op gemiddelde Nederlandse energieprijzen)
 3. 3 concrete en praktische tips voor energiebesparing, prioriteit op snelle wins
-4. Eventuele subsidies of regelingen die van toepassing kunnen zijn
+4. Verwijs naar de investeringsmogelijkheden
 
 Houd het advies helder en to-the-point (max 300 woorden).`;
 
@@ -60,6 +72,7 @@ Houd het advies helder en to-the-point (max 300 woorden).`;
       advies,
       besparing: 'Zie advies',
       tips: [],
+      aanbevolenInvesteringen: investeringsBerekeningen,
     });
   } catch (error) {
     console.error('Fout bij analyse:', error);

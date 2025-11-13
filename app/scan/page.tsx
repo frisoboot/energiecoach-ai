@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
+import InvestmentCalculator from '@/components/InvestmentCalculator';
 import { BAGAdres, ScanFormData, AnalyseResult } from '@/lib/types';
 import { useTranslations } from '@/components/LanguageProvider';
 
@@ -83,19 +84,6 @@ export default function ScanPage() {
     }
   };
 
-  const handleDownloadPDF = () => {
-    const queryParams = new URLSearchParams({
-      adres: formData.adres || '',
-      bouwjaar: formData.bouwjaar?.toString() || '',
-      woningtype: formData.woningtype || '',
-      energielabel: formData.energielabel || '',
-      verwarming: formData.verwarming || '',
-      isolatie: (formData.isolatie || []).join(','),
-      advies: analyseResult?.advies || '',
-    });
-
-    window.open(`/api/pdf?${queryParams.toString()}`, '_blank');
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
@@ -232,32 +220,30 @@ export default function ScanPage() {
           </div>
 
           {analyseResult && (
-            <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 animate-fade-in">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-bold text-gray-900">{scan.resultTitle}</h2>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+            <>
+              <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 animate-fade-in">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-3xl font-bold text-gray-900">{scan.resultTitle}</h2>
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div className="prose max-w-none">
+                  <div className="bg-green-50 border-l-4 border-green-500 p-6 mb-6 rounded-r-lg">
+                    <p className="text-gray-800 whitespace-pre-wrap">{analyseResult.advies}</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="prose max-w-none">
-                <div className="bg-green-50 border-l-4 border-green-500 p-6 mb-6 rounded-r-lg">
-                  <p className="text-gray-800 whitespace-pre-wrap">{analyseResult.advies}</p>
-                </div>
-              </div>
-
-              <button
-                onClick={handleDownloadPDF}
-                className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-4 px-6 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center"
-              >
-                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                {scan.downloadReport}
-              </button>
-            </div>
+              {/* Calculator sectie */}
+              <InvestmentCalculator
+                initialInvesteringen={analyseResult.aanbevolenInvesteringen}
+                formData={formData}
+              />
+            </>
           )}
         </div>
       </div>

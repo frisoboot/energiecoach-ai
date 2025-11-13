@@ -1,12 +1,11 @@
 # AI Energiecoach Webapp
 
-Een moderne Next.js 14 webapp waarmee bewoners gepersonaliseerd energieadvies krijgen via AI, met BAG-API adresherkenning, GPT-4o advies, PDF-rapportage en Cal.com afspraakboeking.
+Een moderne Next.js 14 webapp waarmee bewoners gepersonaliseerd energieadvies krijgen via AI, met BAG-API adresherkenning, GPT-4o advies en Cal.com afspraakboeking.
 
 ## 🚀 Features
 
 - **Energiescan**: Analyseer je woning en ontvang direct een persoonlijk energierapport met besparingstips
 - **AI Chat**: Stel vragen aan de AI energiecoach en krijg direct antwoord
-- **PDF Rapport**: Download je energierapport als professionele PDF
 - **Afspraak maken**: Plan een gesprek met een MeGreen energiecoach
 - **BAG-API Integratie**: Automatische adresherkenning en woninggegevens
 
@@ -15,7 +14,6 @@ Een moderne Next.js 14 webapp waarmee bewoners gepersonaliseerd energieadvies kr
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: TailwindCSS
 - **AI**: OpenAI GPT-4o
-- **PDF**: @react-pdf/renderer
 - **API's**: BAG-API (Kadaster), OpenAI API
 - **TypeScript**: Voor type-safety
 
@@ -58,7 +56,6 @@ energiecoach-website/
 │   ├── afspraak/page.tsx        # Afspraak/booking pagina
 │   ├── api/
 │   │   ├── analyse/route.ts     # GPT-4o analyse endpoint
-│   │   ├── pdf/route.ts         # PDF generatie endpoint
 │   │   └── chat/route.ts        # Chat streaming endpoint
 │   ├── layout.tsx               # Root layout
 │   └── globals.css              # Global styles
@@ -82,7 +79,6 @@ energiecoach-website/
 - Automatische invulling van bouwjaar en woningtype
 - Energielabel, verwarmingstype en isolatie opties
 - AI-analyse met GPT-4o
-- PDF download functionaliteit
 
 ### 3. AI Chat (`/chat`)
 - Real-time streaming chat met GPT-4o
@@ -120,12 +116,6 @@ Analyseert woninggegevens en geeft energieadvies via GPT-4o.
   "tips": []
 }
 ```
-
-### GET `/api/pdf`
-Genereert en download een PDF rapport.
-
-**Query parameters:**
-- `adres`, `bouwjaar`, `woningtype`, `energielabel`, `verwarming`, `isolatie`, `advies`
 
 ### POST `/api/chat`
 Streaming chat endpoint voor AI conversaties.
@@ -217,11 +207,6 @@ De app werkt op elk platform dat Next.js 14 ondersteunt:
 - De BAG-API kan soms traag zijn, probeer opnieuw
 - Check je internetverbinding
 - Voer minimaal 3 karakters in voor suggesties
-
-### "PDF generatie faalt"
-- Check of `@react-pdf/renderer` correct is geïnstalleerd
-- Restart development server
-- Check browser console voor errors
 
 ## 📄 License
 
