@@ -11,15 +11,103 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Alleen scrollen bij nieuwe berichten, niet bij elke update
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    const scrollTimer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    return () => clearTimeout(scrollTimer);
+  }, [messages.length]);
+
+  // Automatisch welkomstbericht ophalen bij eerste load
+  useEffect(() => {
+    const fetchInitialMessage = async () => {
+      if (hasInitialized || messages.length > 0) return;
+      
+      setHasInitialized(true);
+      setIsLoading(true);
+      
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [],
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(common.errors.chat);
+        }
+
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+
+        if (!reader) {
+          throw new Error(common.errors.noStream);
+        }
+
+        let assistantMessage = '';
+
+        setMessages([{ role: 'assistant', content: '' }]);
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data === '[DONE]') continue;
+
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices[0]?.delta?.content || '';
+                if (content) {
+                  assistantMessage += content;
+                  setMessages(prev => {
+                    const newMessages = [...prev];
+                    if (newMessages.length > 0) {
+                      newMessages[newMessages.length - 1] = {
+                        role: 'assistant',
+                        content: assistantMessage,
+                      };
+                    }
+                    return newMessages;
+                  });
+                }
+              } catch {
+                // Ignore parse errors
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Chat error:', error);
+        setMessages([
+          {
+            role: 'assistant',
+            content: chat.retryMessage,
+          },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialMessage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,10 +165,12 @@ export default function ChatPage() {
                 assistantMessage += content;
                 setMessages((prev) => {
                   const newMessages = [...prev];
-                  newMessages[newMessages.length - 1] = {
-                    role: 'assistant',
-                    content: assistantMessage,
-                  };
+                  if (newMessages.length > 0) {
+                    newMessages[newMessages.length - 1] = {
+                      role: 'assistant',
+                      content: assistantMessage,
+                    };
+                  }
                   return newMessages;
                 });
               }
@@ -121,7 +211,7 @@ export default function ChatPage() {
 
       <div className="flex-1 overflow-y-auto py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          {messages.length === 0 && (
+          {messages.length === 0 && isLoading && (
             <div className="text-center py-12">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,18 +220,6 @@ export default function ChatPage() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-3">{chat.welcomeTitle}</h2>
               <p className="text-gray-600 mb-6">{chat.welcomeDescription}</p>
-
-              <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
-                {chat.examples.map((example) => (
-                  <button
-                    key={example}
-                    onClick={() => setInput(example)}
-                    className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-start"
-                  >
-                    <p className="text-sm text-gray-700">{example}</p>
-                  </button>
-                ))}
-              </div>
             </div>
           )}
 

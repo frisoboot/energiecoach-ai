@@ -235,16 +235,16 @@ export const translations: Record<Locale, TranslationContent> = {
     },
     chat: {
       title: "AI Energiecoach Chat",
-      subtitle: "Stel je vragen over energiebesparing",
+      subtitle: "Laat je begeleiden door de AI energiecoach",
       welcomeTitle: "Welkom bij de AI Energiecoach",
       welcomeDescription:
-        "Stel een vraag over energie besparen, isolatie, zonnepanelen of andere energievraagstukken!",
+        "De AI energiecoach helpt je stap-voor-stap met verduurzaming, ook als je nog geen kennis hebt. Je wordt automatisch begeleid!",
       examples: [
         "Hoe kan ik het beste mijn huis isoleren?",
         "Zijn zonnepanelen nog steeds rendabel?",
         "Wat zijn de beste manieren om energie te besparen?",
       ],
-      inputPlaceholder: "Stel een vraag over energie besparen...",
+      inputPlaceholder: "Type je antwoord of vraag hier...",
       retryMessage: "Sorry, er ging iets mis. Probeer het opnieuw.",
     },
     appointment: {
@@ -402,16 +402,16 @@ export const translations: Record<Locale, TranslationContent> = {
     },
     chat: {
       title: "AI Energy Coach Chat",
-      subtitle: "Ask your questions about saving energy",
+      subtitle: "Let the AI energy coach guide you",
       welcomeTitle: "Welcome to the AI Energy Coach",
       welcomeDescription:
-        "Ask a question about saving energy, insulation, solar panels or any other energy topic!",
+        "The AI energy coach will guide you step-by-step with sustainability, even if you have no prior knowledge. You'll be automatically guided!",
       examples: [
         "What is the best way to insulate my home?",
         "Are solar panels still profitable?",
         "What are the best ways to save energy?",
       ],
-      inputPlaceholder: "Ask a question about saving energy...",
+      inputPlaceholder: "Type your answer or question here...",
       retryMessage: "Sorry, something went wrong. Please try again.",
     },
     appointment: {
@@ -569,16 +569,16 @@ export const translations: Record<Locale, TranslationContent> = {
     },
     chat: {
       title: "Yapay Zeka Enerji Koçu Sohbeti",
-      subtitle: "Enerji tasarrufu hakkında sorularınızı sorun",
+      subtitle: "AI enerji koçunun sizi yönlendirmesine izin verin",
       welcomeTitle: "Yapay Zeka Enerji Koçu'na hoş geldiniz",
       welcomeDescription:
-        "Enerji tasarrufu, yalıtım, güneş panelleri veya diğer enerji konuları hakkında soru sorun!",
+        "AI enerji koçu, önceden bilginiz olmasa bile sürdürülebilirlik konusunda size adım adım rehberlik edecek. Otomatik olarak yönlendirileceksiniz!",
       examples: [
         "Evimde yalıtımı en iyi nasıl yapabilirim?",
         "Güneş panelleri hâlâ kârlı mı?",
         "Enerji tasarrufu yapmanın en iyi yolları nelerdir?",
       ],
-      inputPlaceholder: "Enerji tasarrufu hakkında bir soru sorun...",
+      inputPlaceholder: "Cevabınızı veya sorunuzu buraya yazın...",
       retryMessage: "Üzgünüz, bir hata oluştu. Lütfen tekrar deneyin.",
     },
     appointment: {
@@ -736,16 +736,16 @@ export const translations: Record<Locale, TranslationContent> = {
     },
     chat: {
       title: "محادثة مدرب الطاقة بالذكاء الاصطناعي",
-      subtitle: "اطرح أسئلتك حول توفير الطاقة",
+      subtitle: "دع مدرب الطاقة بالذكاء الاصطناعي يرشدك",
       welcomeTitle: "مرحبًا بك في مدرب الطاقة بالذكاء الاصطناعي",
       welcomeDescription:
-        "اطرح سؤالًا حول توفير الطاقة أو العزل أو الألواح الشمسية أو أي موضوع آخر يتعلق بالطاقة!",
+        "سيرشدك مدرب الطاقة بالذكاء الاصطناعي خطوة بخطوة في مجال الاستدامة، حتى لو لم يكن لديك معرفة مسبقة. سيتم توجيهك تلقائيًا!",
       examples: [
         "ما هي أفضل طريقة لعزل منزلي؟",
         "هل الألواح الشمسية ما زالت مربحة؟",
         "ما أفضل الطرق لتوفير الطاقة؟",
       ],
-      inputPlaceholder: "اكتب سؤالًا حول توفير الطاقة...",
+      inputPlaceholder: "اكتب إجابتك أو سؤالك هنا...",
       retryMessage: "عذرًا، حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     },
     appointment: {
