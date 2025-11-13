@@ -42,11 +42,12 @@ export interface Subsidie {
 export interface Investment {
   id: string;
   naam: string;
-  type: 'muurisolatie' | 'dakisolatie' | 'vloerisolatie' | 'hr-glas' | 'zonnepanelen' | 'warmtepomp';
+  type: 'muurisolatie' | 'dakisolatie' | 'vloerisolatie' | 'hr-glas' | 'zonnepanelen' | 'warmtepomp' | 'radiator-folie' | 'radiator-ventilator';
   kostenPerEenheid: number; // € per m² of € per Wp
   besparingPerEenheid: number; // kWh per jaar per eenheid
   eenheid: 'm²' | 'Wp' | 'stuk';
   gemiddeldeOppervlakte?: number; // Voor schattingen
+  quickWin?: boolean; // Beste stap om mee te beginnen
 }
 
 export interface ROICalculation {

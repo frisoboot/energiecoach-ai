@@ -7,6 +7,26 @@ const ELEKTRICITEIT_PRIJS_PER_KWH = 0.30; // €/kWh
 // Standaard investeringsopties met gemiddelde kosten en besparingen
 export const standaardInvesteringen: Investment[] = [
   {
+    id: 'radiator-folie',
+    naam: 'Radiator folie',
+    type: 'radiator-folie',
+    kostenPerEenheid: 25, // € per stuk (gemiddeld 10 radiatoren = €250)
+    besparingPerEenheid: 30, // kWh per radiator per jaar (gas)
+    eenheid: 'stuk',
+    gemiddeldeOppervlakte: 10, // Gemiddeld 10 radiatoren per woning
+    quickWin: true, // Beste stap om mee te beginnen
+  },
+  {
+    id: 'radiator-ventilator',
+    naam: 'Radiator ventilator',
+    type: 'radiator-ventilator',
+    kostenPerEenheid: 40, // € per stuk
+    besparingPerEenheid: 50, // kWh per ventilator per jaar (gas)
+    eenheid: 'stuk',
+    gemiddeldeOppervlakte: 5, // Gemiddeld 5 radiatoren met ventilator
+    quickWin: true, // Beste stap om mee te beginnen
+  },
+  {
     id: 'muurisolatie',
     naam: 'Muurisolatie',
     type: 'muurisolatie',
@@ -159,6 +179,10 @@ export function getAanbevolenInvesteringen(filters: {
 }): Investment[] {
   const aanbevelingen: Investment[] = [];
 
+  // Voeg altijd quick wins toe als eerste (beste stap om mee te beginnen)
+  const quickWins = standaardInvesteringen.filter((inv) => inv.quickWin);
+  aanbevelingen.push(...quickWins);
+
   // Check welke isolatie ontbreekt
   const huidigeIsolatie = filters.isolatie || [];
   
@@ -192,11 +216,17 @@ export function getAanbevolenInvesteringen(filters: {
   const zonnepanelen = standaardInvesteringen.find((inv) => inv.id === 'zonnepanelen');
   if (zonnepanelen) aanbevelingen.push(zonnepanelen);
 
-  // Sorteer op ROI (beste eerst)
+  // Sorteer: quick wins eerst, dan op ROI (beste eerst)
   const berekeningen = aanbevelingen.map((inv) => berekenROI(inv));
-  berekeningen.sort((a, b) => b.roiPercentage - a.roiPercentage);
+  berekeningen.sort((a, b) => {
+    // Quick wins altijd eerst
+    if (a.investment.quickWin && !b.investment.quickWin) return -1;
+    if (!a.investment.quickWin && b.investment.quickWin) return 1;
+    // Dan op ROI
+    return b.roiPercentage - a.roiPercentage;
+  });
 
-  // Retourneer top 3
-  return berekeningen.slice(0, 3).map((calc) => calc.investment);
+  // Retourneer top 5 (quick wins + 3 andere)
+  return berekeningen.slice(0, 5).map((calc) => calc.investment);
 }
 

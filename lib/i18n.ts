@@ -84,6 +84,7 @@ export interface TranslationContent {
     paybackTime: string;
     roi10Years: string;
     recommended: string;
+    bestStepToStart: string;
     top3Investments: string;
   };
   chat: {
@@ -229,6 +230,7 @@ export const translations: Record<Locale, TranslationContent> = {
       paybackTime: "Terugverdientijd",
       roi10Years: "ROI (10 jaar)",
       recommended: "Aanbevolen",
+      bestStepToStart: "Beste stap om mee te beginnen",
       top3Investments: "Top 3 Aanbevolen Investeringen",
     },
     chat: {
@@ -395,6 +397,7 @@ export const translations: Record<Locale, TranslationContent> = {
       paybackTime: "Payback time",
       roi10Years: "ROI (10 years)",
       recommended: "Recommended",
+      bestStepToStart: "Best step to start with",
       top3Investments: "Top 3 Recommended Investments",
     },
     chat: {
@@ -561,6 +564,7 @@ export const translations: Record<Locale, TranslationContent> = {
       paybackTime: "Geri ödeme süresi",
       roi10Years: "ROI (10 yıl)",
       recommended: "Önerilen",
+      bestStepToStart: "Başlamak için en iyi adım",
       top3Investments: "En Çok Önerilen 3 Yatırım",
     },
     chat: {
@@ -727,6 +731,7 @@ export const translations: Record<Locale, TranslationContent> = {
       paybackTime: "وقت الاسترداد",
       roi10Years: "العائد على الاستثمار (10 سنوات)",
       recommended: "موصى به",
+      bestStepToStart: "أفضل خطوة للبدء بها",
       top3Investments: "أفضل 3 استثمارات موصى بها",
     },
     chat: {

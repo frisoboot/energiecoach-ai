@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Investment, ROICalculation, CalculatorResult } from '@/lib/types';
 import { useTranslations } from '@/components/LanguageProvider';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -16,7 +16,7 @@ interface InvestmentCalculatorProps {
   };
 }
 
-export default function InvestmentCalculator({ initialInvesteringen, formData }: InvestmentCalculatorProps) {
+export default function InvestmentCalculator({ initialInvesteringen }: InvestmentCalculatorProps) {
   const { t } = useTranslations();
   const { scan } = t;
   const [selectedInvestments, setSelectedInvestments] = useState<string[]>([]);
@@ -44,15 +44,7 @@ export default function InvestmentCalculator({ initialInvesteringen, formData }:
     }
   }, [initialInvesteringen]);
 
-  useEffect(() => {
-    if (selectedInvestments.length > 0) {
-      calculateROI();
-    } else {
-      setCalculatorResult(null);
-    }
-  }, [selectedInvestments]);
-
-  const calculateROI = async () => {
+  const calculateROI = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch('/api/calculator', {
@@ -72,7 +64,15 @@ export default function InvestmentCalculator({ initialInvesteringen, formData }:
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedInvestments]);
+
+  useEffect(() => {
+    if (selectedInvestments.length > 0) {
+      calculateROI();
+    } else {
+      setCalculatorResult(null);
+    }
+  }, [selectedInvestments, calculateROI]);
 
   const toggleInvestment = (investmentId: string) => {
     setSelectedInvestments((prev) =>
@@ -123,11 +123,18 @@ export default function InvestmentCalculator({ initialInvesteringen, formData }:
               <div className="ml-3 flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-gray-900">{investment.naam}</span>
-                  {initialCalc && (
-                    <span className="text-sm text-green-600 font-medium">
-                      {scan.recommended}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {investment.quickWin && (
+                      <span className="text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-1 rounded">
+                        {scan.bestStepToStart}
+                      </span>
+                    )}
+                    {initialCalc && (
+                      <span className="text-sm text-green-600 font-medium">
+                        {scan.recommended}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 {initialCalc && (
                   <div className="mt-2 text-sm text-gray-600">
