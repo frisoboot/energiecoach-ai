@@ -9,10 +9,10 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center h-16 md:h-20">
           <Link href="/" className="flex items-center group">
-            <div className="relative w-40 h-12 md:w-48 md:h-14 transition-transform group-hover:scale-105">
+            <div className="relative w-32 h-12 md:w-40 md:h-14 transition-transform group-hover:scale-105">
               <Image
-                src="/megreen-logo.svg"
-                alt="MeGreen Logo"
+                src="/megreen-logo.png"
+                alt="Gemeente Maassluis Logo"
                 fill
                 className="object-contain"
                 priority

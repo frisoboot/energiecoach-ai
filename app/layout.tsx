@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Energiecoach | MeGreen",
+  title: "AI Energiecoach | Gemeente Maassluis",
   description:
     "Ontvang persoonlijk energieadvies met behulp van AI. Doe de energiescan, stel je vragen of maak direct een afspraak met een energiecoach.",
 };

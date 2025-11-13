@@ -157,7 +157,7 @@ export const translations: Record<Locale, TranslationContent> = {
           "Plan een gesprek met een MeGreen energiecoach voor persoonlijk advies en gratis energiebesparende spullen.",
         cta: "Plan afspraak",
       },
-      footer: "Powered by AI • MeGreen Energiecoach",
+      footer: "Powered by AI • Gemeente Maassluis Energiecoach",
     },
     scan: {
       title: "Energiescan",
@@ -324,7 +324,7 @@ export const translations: Record<Locale, TranslationContent> = {
           "Schedule a conversation with a MeGreen energy coach for tailored advice and free energy-saving products.",
         cta: "Plan meeting",
       },
-      footer: "Powered by AI • MeGreen Energy Coach",
+      footer: "Powered by AI • Municipality of Maassluis Energy Coach",
     },
     scan: {
       title: "Energy scan",
@@ -491,7 +491,7 @@ export const translations: Record<Locale, TranslationContent> = {
           "MeGreen enerji koçuyla kişiye özel tavsiye ve ücretsiz enerji tasarrufu ürünleri için görüşme planlayın.",
         cta: "Randevu planla",
       },
-      footer: "Yapay zekâ tarafından desteklenir • MeGreen Enerji Koçu",
+      footer: "Yapay zekâ tarafından desteklenir • Maassluis Belediyesi Enerji Koçu",
     },
     scan: {
       title: "Enerji taraması",
@@ -658,7 +658,7 @@ export const translations: Record<Locale, TranslationContent> = {
           "حدد محادثة مع مدرب طاقة من MeGreen للحصول على نصيحة شخصية ومنتجات مجانية لتوفير الطاقة.",
         cta: "خطط للموعد",
       },
-      footer: "مدعوم بالذكاء الاصطناعي • مدرب الطاقة MeGreen",
+      footer: "مدعوم بالذكاء الاصطناعي • مدرب الطاقة بلدية ماسلويس",
     },
     scan: {
       title: "فحص الطاقة",
