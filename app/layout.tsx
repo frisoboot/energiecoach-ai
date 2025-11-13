@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/components/LanguageProvider";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import Header from "@/components/Header";
 import "./globals.css";
 
@@ -33,7 +32,6 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <LanguageProvider>
           <Header />
-          <LanguageSwitcher />
           <div className="pt-16 md:pt-20">
             {children}
           </div>
