@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import Header from "@/components/Header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,8 +32,11 @@ export default function RootLayout({
     <html lang="nl">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <LanguageProvider>
+          <Header />
           <LanguageSwitcher />
-          {children}
+          <div className="pt-16 md:pt-20">
+            {children}
+          </div>
           <SpeedInsights />
           <Analytics />
         </LanguageProvider>
